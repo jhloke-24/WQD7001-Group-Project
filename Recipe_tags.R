@@ -4,19 +4,13 @@ library(tidyverse)
 library(splitstackshape)
 
 recipe_data <- read_csv("C:/Users/user/Downloads/RAW_recipes.csv")
-recipe_data
-recipe_data2 <- select(recipe_data, name, tags)
 
-split_tags <- cSplit(recipe_data2,"tags",",")
-View(split_tags)
+recipe_data %<>%
+  select(name, tags) %>%
+  cSplit("tags",",")
+recipe_tags <- gsub("[[:punct:][:blank:]]+", " ", as.matrix(recipe_data))
+recipe_tags <- data.frame(recipe_tags)
+recipe_tags <- select(recipe_tags, name, tags_01:tags_06)
 
-split_tags2 <- gsub("[[:punct:][:blank:]]+", " ", as.matrix(split_tags))
-View(split_tags2)
-
-split_tags <- tibble(split_tags2)
-split_tags
-
-rm(recipe_data, recipe_data2, split_tags2)
-
-#split_tags %>%
-  #filter_at(vars(tags_01:tags_73)
+rm(recipe_data)
+View(recipe_tags)
