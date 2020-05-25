@@ -5,12 +5,13 @@ library(splitstackshape)
 
 recipe_data <- read_csv("C:/Users/user/Downloads/RAW_recipes.csv")
 
+#create name and tags data frame and split tags by comma
 recipe_data %<>%
   select(name, tags) %>%
   cSplit("tags",",")
-recipe_tags <- gsub("[[:punct:][:blank:]]+", " ", as.matrix(recipe_data))
-recipe_tags <- data.frame(recipe_tags)
-recipe_tags <- select(recipe_tags, name, tags_01:tags_06)
 
-rm(recipe_data)
-View(recipe_tags)
+#remove punctuations and extra blank space
+recipe_data <- gsub("[[:punct:][:blank:]]+", " ", as.matrix(recipe_data))
+recipe_data <- data.frame(recipe_data)
+
+View(recipe_data)
