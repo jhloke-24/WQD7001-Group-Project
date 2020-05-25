@@ -1,5 +1,3 @@
-install.packages("tidyverse")
-
 #call the library package
 library(stringr)
 library(tidyverse)
@@ -15,10 +13,13 @@ class(df$steps)
 df$steps<-as.character(df$steps)
 class(df$steps) #verify column class
 
-#splitting, the output is stored in a new variable called recipeStep
+#inititalize new vaiable called recipeStep --> NEWLY ADDED LINE AS OF 25TH May 2020
+recipeStep<-str_split(df$steps[1], "', '")
+
+#Looping
 x<-1
 while (x < 231638) {
-  recipeStep[[x]]<-str_split(df$steps[x], "', '")
+  recipeStep[x]<-str_split(df$steps[x], "', '")
   x<-x+1
 }
 
