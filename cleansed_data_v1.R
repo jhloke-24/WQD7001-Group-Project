@@ -1,5 +1,4 @@
 install.packages("stringr")
-install.packages("splitackshape")
 install.packages("tidyverse")
 install.packages("splitstackshape")
 library(tidyverse)
@@ -69,14 +68,13 @@ nutrition.taken
 
 df = df %>%
   cSplit("tags",",") %>%
-  select(-("tags_07":"tags_65"))
+  select(-("tags_02":"tags_04")) %>%
+  select(-("tags_07":"tags_65")) %>%
+  rename(tags_02 = tags_05, tags_03 = tags_06)
 
 df$tags_01 <- gsub("[[:punct:][:blank:]]+", " ",df$tags_01)
 df$tags_02 <- gsub("[[:punct:][:blank:]]+", " ",df$tags_02)
 df$tags_03 <- gsub("[[:punct:][:blank:]]+", " ",df$tags_03)
-df$tags_04 <- gsub("[[:punct:][:blank:]]+", " ",df$tags_04)
-df$tags_05 <- gsub("[[:punct:][:blank:]]+", " ",df$tags_05)
-df$tags_06 <- gsub("[[:punct:][:blank:]]+", " ",df$tags_06)
 
 #remove special character for ingredients
 df$ingredients <-gsub("\\[","",gsub("\\]","",gsub("\\'","",gsub('\\"',"",df$ingredients))))
