@@ -1,10 +1,3 @@
-install.packages("shiny")
-install.packages("tidyverse")
-install.packages("DT")
-install.packages("data.table")
-install.packages("shinyalert")
-install.packages("shinythems")
-install.packages("readr")
 library(shiny)
 library(tidyverse)
 library(DT)
@@ -14,13 +7,17 @@ library(shinythemes)
 library(readr)
 
 testdata <- read_csv("C:/Users/User/Documents/part1.csv")
+testdata <- select(testdata, -X1)
 testdata$config_split <- strsplit(as.character(testdata$ingredients),split = ",")
 testdata <- rowwise(testdata)
 config <- unique(unlist(strsplit(as.character(testdata$ingredients), ",")))
-
+duration <- unique(unlist(strsplit(as.character(testdata$hours), ",")))
 
 side_width = 4
-ui <- navbarPage(
+ui <- fluidPage(
+  theme= shinytheme("united"),
+  themeSelector(),
+  navbarPage(
   "Clear your Fridge",
   tabPanel("Find your Recipe",
            sidebarLayout(
@@ -30,7 +27,7 @@ ui <- navbarPage(
                           selectizeInput('e1', '1.Select Ingredients', choices = config, multiple = TRUE),
                           hr(),       
                           br(), 
-                          selectizeInput('e2', '2. Select time range', choices = var, multiple = FALSE),
+                          selectizeInput('e2', '2. Select Time Range', choices = duration, multiple = FALSE),
                           sliderInput('e3','3.Select Calories Level',min=0,max=450000,value=0,step=NULL),
                           sliderInput('e4','4.Select Carbohydrates Level',min=0,max=37000,value=0,step=NULL)),
              mainPanel(
@@ -39,11 +36,7 @@ ui <- navbarPage(
              )
            )
   )
-  
-  
-  # tags$style(type = "text/css", "body {padding-top: 175px;}"),
-  # theme = shinytheme("cosmo"),
-  # position = "fixed-top"
+  )
   
 )
 
@@ -65,9 +58,9 @@ server<-function(input,output){
                                            Carbohydrate = nutrition_carbohydrate)
     }
     print(r2)
-    
   }
-  ,escape = FALSE,extensions = 'Responsive',options = list(pageLength = 10, autoWidth = TRUE,
+  ,escape = FALSE,extensions = 'Responsive', selection=list(mode="single", target="row"),
+                                            options = list(pageLength = 10, autoWidth = TRUE,
                                                            dom  = 'tip',columnDefs = list(list(
                                                              targets = 1,
                                                              render = JS(
@@ -78,5 +71,70 @@ server<-function(input,output){
                                                            ))), callback = JS('table.page(3).draw(false);'),
   rownames= FALSE)
   
+
+  
+  
+ #extract values from clicked rows 
+  detail1 <-  renderText({
+              s <- input$mytable_rows_selected
+              paste(testdata[s,1])
+              })
+  
+  detail2 <- renderText({
+              s <- input$mytable_rows_selected
+              paste(testdata[s,4])
+              })
+  
+  detail3 <- renderText({
+               s <- input$mytable_rows_selected
+              paste(testdata[s,3])
+              })
+  
+  detail4 <- renderText({
+              s <- input$mytable_rows_selected
+              paste(testdata[s,14]," , ",testdata[s,15]," , ",testdata[s,16])
+              })
+              
+  
+  
+  output$modal_text <- renderPrint({
+    HTML("<b>Recipe</b>", "<br/>")})
+  
+  output$modal_text1 <- detail1
+  
+  output$modal_text2 <- renderPrint({
+    HTML("<br/><br/>","<b>Ingredients</b>", "<br/>")})
+  
+  output$modal_text3 <- detail2
+  
+  output$modal_text4 <- renderPrint({
+    HTML("<br/><br/>","<b>Steps</b>", "<br/>")})  
+
+  output$modal_text5 <- detail3
+
+  output$modal_text6 <- renderPrint({
+    HTML("<br/><br/>","<b>Tags</b>", "<br/>")}) 
+  
+  output$modal_text7 <- detail4
+  
+  
+  myModal <- function(failed=FALSE){
+    modalDialog(
+      htmlOutput('modal_text'),
+      htmlOutput('modal_text1'),
+      htmlOutput('modal_text2'),
+      htmlOutput('modal_text3'),
+      htmlOutput('modal_text4'),
+      htmlOutput('modal_text5'),
+      htmlOutput('modal_text6'),
+      htmlOutput('modal_text7'),
+      easyClose = TRUE
+    )
+  }
+  
+  observeEvent(input$mytable_rows_selected,{
+    showModal(myModal())
+  })
 }
+
 shinyApp(ui=ui,server=server)
