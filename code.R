@@ -12,6 +12,9 @@ testdata$config_split <- strsplit(as.character(testdata$ingredients),split = ","
 testdata <- rowwise(testdata)
 config <- unique(unlist(strsplit(as.character(testdata$ingredients), ",")))
 duration <- unique(unlist(strsplit(as.character(testdata$hours), ",")))
+calorie <- unique(unlist(strsplit(as.character(testdata$g_calorie), ",")))
+carbohydrate <- unique(unlist(strsplit(as.character(testdata$g_carbohydrate), ",")))
+
 
 side_width = 4
 ui <- fluidPage(
@@ -27,9 +30,12 @@ ui <- fluidPage(
                           selectizeInput('e1', '1.Select Ingredients', choices = config, multiple = TRUE),
                           hr(),       
                           br(), 
-                          selectizeInput('e2', '2. Select Time Range', choices = duration, multiple = FALSE),
-                          sliderInput('e3','3.Select Calories Level',min=0,max=450000,value=0,step=NULL),
-                          sliderInput('e4','4.Select Carbohydrates Level',min=0,max=37000,value=0,step=NULL)),
+                            selectizeInput('e2', '2. Select Time Range', choices = duration, multiple = FALSE),
+                            selectizeInput('e3', '3. Select Calories Level', choices = calorie, multiple = FALSE),
+                            selectizeInput('e4', '4. Select Carbohydrates Level', choices = carbohydrate, multiple = FALSE)),   
+#                           selectizeInput('e2', '2. Select Time Range', choices = duration, multiple = FALSE),
+#                           sliderInput('e3','3.Select Calories Level',min=0,max=450000,value=0,step=NULL),
+#                           sliderInput('e4','4.Select Carbohydrates Level',min=0,max=37000,value=0,step=NULL)),
              mainPanel(
                width = 12 - side_width,
                DT::dataTableOutput("mytable")
