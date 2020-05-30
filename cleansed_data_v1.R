@@ -12,7 +12,6 @@ df <- read.csv(PATH)
 df<-filter(df,df$n_ingredients<=5)
 glimpse(df)
 
-start.time <- Sys.time()
 
 #Recipe Name
 df$name = gsub("\\s+", " ", df$name)
@@ -22,7 +21,6 @@ df = df[!duplicated(df$name),]
 df = df[-1,]
 
 
-name.time <- Sys.time()
 
 #Recipe Duration
 summary(df$minutes)
@@ -34,7 +32,13 @@ df$time_temp_002 = df$minutes %% 60
 typeof(df$time_temp_001)
 df$hours = paste(df$time_temp_001,"Hours",df$time_temp_002,"Minutes")
 
-duration.time <- Sys.time()
+#Grouping for time
+df$g_minutes <- ifelse(df$minutes<=5, "a.<=5 minutes", 
+                       ifelse(df$minutes<=15, "b.>5-15 minutes", 
+                              ifelse(df$minutes<=30, "c.>15-30 minutes", 
+                                     ifelse(df$minutes<=60, "d.>30 minutes to 1 hour", "e.>1 hour"))))
+
+
 
 # Nutrition Value
 
@@ -51,17 +55,35 @@ for (i in 1:nrow(df))
   df$nutrition_carbohydrate[i]=df$nutrition_new[[i]][7]
 }
 
-end.time <- Sys.time()
+
+#Define quantile for nutrition
+
+df$nutrition_calorie = sapply(df$nutrition_calorie, as.numeric) 
+quan_calorie<-quantile(df$nutrition_calorie, c(.25,.5,.75,1)) 
+quan_calorie_25<-quan_calorie[[1]]
+quan_calorie_50<-quan_calorie[[2]]
+quan_calorie_75<-quan_calorie[[3]]
+
+df$nutrition_carbohydrate = sapply(df$nutrition_carbohydrate, as.numeric) 
+quan_carbohydrate<-quantile(df$nutrition_carbohydrate, c(.25,.5,.75,1)) 
+quan_carbohydrate_25<-quan_carbohydrate[[1]]
+quan_carbohydrate_50<-quan_carbohydrate[[2]]
+quan_carbohydrate_75<-quan_carbohydrate[[3]]
+
+#Grouping for Nutrition Value
+df$g_calorie <- ifelse(df$nutrition_calorie<=quan_calorie_25, "a.low (<=108 cal)", 
+                       ifelse(df$nutrition_calorie<=quan_calorie_50, "b.mid (<=211 cal)", 
+                              ifelse(df$nutrition_calorie<=quan_calorie_75, "c.high (<=399 cal)", "d.very high (>399 cal)")))
+
+df$g_carbohydrate <- ifelse(df$nutrition_carbohydrate<=quan_carbohydrate_25, "a.low (<=2g)", 
+                       ifelse(df$nutrition_carbohydrate<=quan_carbohydrate_50, "b.mid (<=6g)", 
+                              ifelse(df$nutrition_carbohydrate<=quan_carbohydrate_75, "c.high (<=13g)", "d.very high (>13g)")))
+
+#End Grouping Nutrition Value
+
 
 #Drop intermediate field
 df = subset(df, select = -c(time_temp_001,time_temp_002,nutrition_new))
-
-#Time Elapse
-
-time.taken <- end.time - start.time
-nutrition.taken <- end.time - duration.time
-time.taken
-nutrition.taken
 
 
 #split tags by comma and drop extra tags
@@ -85,4 +107,4 @@ df$steps <- gsub("\\[","",gsub("\\]","",gsub("\\'","",df$steps)))
 #remove redundant columns
 df<-select(df,-c(2,3,4,5,6,9))
 
-write.csv(df,"part1.csv")
+write.csv(df,"part1_v2.csv")
