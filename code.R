@@ -6,7 +6,7 @@ library(shinyalert)
 library(shinythemes)
 library(readr)
 
-testdata <- read_csv("C:/Users/user/Documents/part1.csv")
+testdata <- read_csv("part1.csv")
 testdata <- select(testdata, -X1)
 testdata$config_split <- strsplit(as.character(testdata$ingredients),split = ",")
 testdata <- rowwise(testdata)
@@ -32,10 +32,19 @@ ui <- fluidPage(
                             br(), 
                             selectizeInput('e2', '2. Select Time Range', choices = duration, multiple = FALSE),
                             selectizeInput('e3', '3. Select Calories Level', choices = calorie, multiple = FALSE),
-                            selectizeInput('e4', '4. Select Carbohydrates Level', choices = carbohydrate, multiple = FALSE)),   
+                            selectizeInput('e4', '4. Select Carbohydrates Level', choices = carbohydrate, multiple = FALSE),   
                #                           selectizeInput('e2', '2. Select Time Range', choices = duration, multiple = FALSE),
                #                           sliderInput('e3','3.Select Calories Level',min=0,max=450000,value=0,step=NULL),
-               #                           sliderInput('e4','4.Select Carbohydrates Level',min=0,max=37000,value=0,step=NULL)),
+               #                           sliderInput('e4','4.Select Carbohydrates Level',min=0,max=37000,value=0,step=NULL),
+               strong("5. Cooking Timer"),
+               br(),br(),
+               actionButton('start','Start'),
+               actionButton('stop','Stop'),
+               actionButton('reset','Reset'),
+               br(),
+               numericInput('seconds','Seconds:',value=10,min=0,max=99999,step=1),
+               textOutput('timeleft')
+             ),
                mainPanel(
                  width = 12 - side_width,
                  DT::dataTableOutput("mytable")
@@ -46,7 +55,7 @@ ui <- fluidPage(
   
 )
 
-server<-function(input,output){
+server<-function(input,output,session){
   output$mytable <- renderDataTable({
     if(isTruthy(input$e1))
     {result <- filter(testdata,all(input$e1 %in% config_split))
@@ -139,6 +148,40 @@ server<-function(input,output){
   observeEvent(input$mytable_rows_selected,{
     showModal(myModal())
   })
+  
+  # Initialize the timer, 10 seconds, not active.
+  timer <- reactiveVal(10)
+  active <- reactiveVal(FALSE)
+  
+  # Output the time left.
+  output$timeleft <- renderText({
+    paste("Time left: ", seconds_to_period(timer()))
+  })
+  
+  
+  # observer that invalidates every second. If timer is active, decrease by one.
+  observe({
+    invalidateLater(1000, session)
+    isolate({
+      if(active())
+      {
+        timer(timer()-1)
+        if(timer()<1)
+        {
+          active(FALSE)
+          showModal(modalDialog(
+            title = "Important message",
+            "Countdown completed!"
+          ))
+        }
+      }
+    })
+  })
+  
+  # observers for actionbuttons
+  observeEvent(input$start, {active(TRUE)})
+  observeEvent(input$stop, {active(FALSE)})
+  observeEvent(input$reset, {timer(input$seconds)})
 }
 
 shinyApp(ui=ui,server=server)
