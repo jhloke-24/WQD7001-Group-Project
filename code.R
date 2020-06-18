@@ -11,15 +11,14 @@ testdata <- select(testdata, -X1)
 testdata$config_split <- strsplit(as.character(testdata$ingredients),split = ",")
 testdata <- rowwise(testdata)
 config <- unique(unlist(strsplit(as.character(testdata$ingredients), ",")))
-duration <- unique(unlist(strsplit(as.character(testdata$hours), ",")))
-calorie <- unique(unlist(strsplit(as.character(testdata$g_calorie), ",")))
-carbohydrate <- unique(unlist(strsplit(as.character(testdata$g_carbohydrate), ",")))
+duration <- sort(unique(unlist(strsplit(as.character(testdata$g_minutes), ","))))
+calorie <- sort(unique(unlist(strsplit(as.character(testdata$g_calorie), ","))))
+carbohydrate <- sort(unique(unlist(strsplit(as.character(testdata$g_carbohydrate), ","))))
 
 
 side_width = 4
 ui <- fluidPage(
   theme= shinytheme("united"),
-  themeSelector(),
   navbarPage(
     "Clear your Fridge",
     tabPanel("Find your Recipe",
@@ -27,24 +26,24 @@ ui <- fluidPage(
                position = "left",
                sidebarPanel(width = side_width,
                             h3("Filter Recipes"),
-                            selectizeInput('e1', '1.Select Ingredients', choices = config, multiple = TRUE),
+                            selectizeInput('e1', '1.Type/Select Ingredients', choices = config, multiple = TRUE),
                             hr(),       
                             br(), 
-                            selectizeInput('e2', '2. Select Time Range', choices = duration, multiple = FALSE),
-                            selectizeInput('e3', '3. Select Calories Level', choices = calorie, multiple = FALSE),
-                            selectizeInput('e4', '4. Select Carbohydrates Level', choices = carbohydrate, multiple = FALSE),   
-               #                           selectizeInput('e2', '2. Select Time Range', choices = duration, multiple = FALSE),
-               #                           sliderInput('e3','3.Select Calories Level',min=0,max=450000,value=0,step=NULL),
-               #                           sliderInput('e4','4.Select Carbohydrates Level',min=0,max=37000,value=0,step=NULL),
-               strong("5. Cooking Timer"),
-               br(),br(),
-               actionButton('start','Start'),
-               actionButton('stop','Stop'),
-               actionButton('reset','Reset'),
-               br(),
-               numericInput('seconds','Seconds:',value=10,min=0,max=99999,step=1),
-               textOutput('timeleft')
-             ),
+                            selectizeInput('e2', '2. Select Time Range', choices = duration, multiple = TRUE),
+                            selectizeInput('e3', '3. Select Calories Level', choices = calorie, multiple = TRUE),
+                            selectizeInput('e4', '4. Select Carbohydrates Level', choices = carbohydrate, multiple = TRUE),   
+                            #                           selectizeInput('e2', '2. Select Time Range', choices = duration, multiple = FALSE),
+                            #                           sliderInput('e3','3.Select Calories Level',min=0,max=450000,value=0,step=NULL),
+                            #                           sliderInput('e4','4.Select Carbohydrates Level',min=0,max=37000,value=0,step=NULL),
+                            strong("5. Cooking Timer"),
+                            br(),br(),
+                            actionButton('start','Start'),
+                            actionButton('stop','Stop'),
+                            actionButton('reset','Reset'),
+                            br(),
+                            numericInput('seconds','Seconds:',value=10,min=0,max=99999,step=1),
+                            textOutput('timeleft')
+               ),
                mainPanel(
                  width = 12 - side_width,
                  DT::dataTableOutput("mytable")
@@ -58,7 +57,11 @@ ui <- fluidPage(
 server<-function(input,output,session){
   output$mytable <- renderDataTable({
     if(isTruthy(input$e1))
-    {result <- filter(testdata,all(input$e1 %in% config_split))
+    {result <- testdata %>%
+               filter(all(input$e1 %in% config_split)) %>%
+               filter(all(input$e2 %in% g_minutes)) %>%
+               filter(all(input$e3 %in% g_calorie)) %>%
+               filter(all(input$e4 %in% g_carbohydrate))
     r2<- result %>% ungroup %>% select(Recipe = name,
                                        Ingredient = ingredients,
                                        `Preparation Time` = hours,
@@ -87,27 +90,43 @@ server<-function(input,output,session){
   
   #extract values from clicked rows 
   detail1 <-  renderText({
-    filtered <- filter(testdata,all(input$e1 %in% config_split))
+    filtered <- testdata %>%
+                filter(all(input$e1 %in% config_split)) %>%
+                filter(all(input$e2 %in% g_minutes)) %>%
+                filter(all(input$e3 %in% g_calorie)) %>%
+                filter(all(input$e4 %in% g_carbohydrate))
     s <- input$mytable_rows_selected
-    paste(filtered[s, 2])
+    paste(filtered[s,1])
   })
   
   detail2 <- renderText({
-    filtered <- filter(testdata,all(input$e1 %in% config_split))
-    s <- input$mytable_rows_selected
-    paste(filtered[s,5])
-  })
-  
-  detail3 <- renderText({
-    filtered <- filter(testdata,all(input$e1 %in% config_split))
+    filtered <- testdata %>%
+                filter(all(input$e1 %in% config_split)) %>%
+                filter(all(input$e2 %in% g_minutes)) %>%
+                filter(all(input$e3 %in% g_calorie)) %>%
+                filter(all(input$e4 %in% g_carbohydrate))
     s <- input$mytable_rows_selected
     paste(filtered[s,4])
   })
   
-  detail4 <- renderText({
-    filtered <- filter(testdata,all(input$e1 %in% config_split))
+  detail3 <- renderText({
+    filtered <- testdata %>%
+                filter(all(input$e1 %in% config_split)) %>%
+                filter(all(input$e2 %in% g_minutes)) %>%
+                filter(all(input$e3 %in% g_calorie)) %>%
+                filter(all(input$e4 %in% g_carbohydrate))
     s <- input$mytable_rows_selected
-    paste(filtered[s,18]," , ",filtered[s,19]," , ",filtered[s,20])
+    paste(filtered[s,3])
+  })
+  
+  detail4 <- renderText({
+    filtered <- testdata %>%
+                filter(all(input$e1 %in% config_split)) %>%
+                filter(all(input$e2 %in% g_minutes)) %>%
+                filter(all(input$e3 %in% g_calorie)) %>%
+                filter(all(input$e4 %in% g_carbohydrate))
+    s <- input$mytable_rows_selected
+    paste(filtered[s,17]," , ",filtered[s,18]," , ",filtered[s,19])
   })
   
   output$modal_text <- renderPrint({
