@@ -5,9 +5,9 @@ library(data.table)
 library(shinyalert)
 library(shinythemes)
 library(readr)
+library(lubridate)
 
 testdata <- read_csv("part1.csv")
-testdata <- select(testdata, -X1)
 testdata$config_split <- strsplit(as.character(testdata$ingredients),split = ",")
 testdata <- rowwise(testdata)
 config <- unique(unlist(strsplit(as.character(testdata$ingredients), ",")))
@@ -96,7 +96,7 @@ server<-function(input,output,session){
                 filter(all(input$e3 %in% g_calorie)) %>%
                 filter(all(input$e4 %in% g_carbohydrate))
     s <- input$mytable_rows_selected
-    paste(filtered[s,1])
+    paste(filtered[s,2])
   })
   
   detail2 <- renderText({
@@ -106,7 +106,7 @@ server<-function(input,output,session){
                 filter(all(input$e3 %in% g_calorie)) %>%
                 filter(all(input$e4 %in% g_carbohydrate))
     s <- input$mytable_rows_selected
-    paste(filtered[s,4])
+    paste(filtered[s,5])
   })
   
   detail3 <- renderText({
@@ -116,7 +116,7 @@ server<-function(input,output,session){
                 filter(all(input$e3 %in% g_calorie)) %>%
                 filter(all(input$e4 %in% g_carbohydrate))
     s <- input$mytable_rows_selected
-    paste(filtered[s,3])
+    paste(filtered[s,4])
   })
   
   detail4 <- renderText({
@@ -126,7 +126,7 @@ server<-function(input,output,session){
                 filter(all(input$e3 %in% g_calorie)) %>%
                 filter(all(input$e4 %in% g_carbohydrate))
     s <- input$mytable_rows_selected
-    paste(filtered[s,17]," , ",filtered[s,18]," , ",filtered[s,19])
+    paste(filtered[s,18]," , ",filtered[s,19]," , ",filtered[s,20])
   })
   
   output$modal_text <- renderPrint({
