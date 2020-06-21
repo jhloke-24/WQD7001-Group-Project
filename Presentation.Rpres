@@ -1,0 +1,92 @@
+Recipe Recommender
+========================================================
+css:css-file.css
+font-family: 'Times New Roman'
+transition: rotate
+
+## <p style="font-size:30px; color:#660000;">WQD7001 Principes of Data Science</p>
+
+<p style="font-size:30px; color:#660000;font-weight:bold;">22 June 2020</p>
+
+<p style="font-size:24px; color:#660000;font-weight:bold;">Hii Lee Zing 17218828 <br>Khairul Hafiz Bin Khairol Annuur 17217763<br>Loke Jenn Hong 17217852<br>Tan Qian Hui 17221645</p>
+
+<p style="font-size:20px; color:#660000; ">App url: <a href="https://jhloke24.shinyapps.io/wqd7001_recipe_recommender/">Recipe Recommender</a><br>Source code: <a href="https://github.com/jhloke-24/WQD7001-Group-Project">https://github.com/jhloke-24/WQD7001-Group-Project</a></p>
+
+
+***
+
+Recipe Recommender
+========================================================
+left: 60%
+font-family: 'Times New Roman'
+transition: rotate
+
+
+<p style="font-size:26px; color:#1a1a1a; font-weight:bold;">Have you ever experienced open the fridge but not knowing what eat? </p>
+
+### <p style="font-size:36px; color:#660000; font-weight:bold;">Purposes</p>
+
+- <p style="font-size:26px; color:#1a1a1a; font-weight:bold;">Help to use up the ingredients in the fridge</p>
+- <p style="font-size:26px; color:#1a1a1a; font-weight:bold;">Have fun in trying new recipes and cooking</p>
+
+
+### <p style="font-size:36px; color:#660000; font-weight:bold;"> Who can use? </p>
+<p style="font-size:26px; color:#1a1a1a; font-weight:bold;">
+Basically everyone and is extra useful for those who loves to try something <span style="color: #ff0000"><b>NEW</b></span>!
+</p>
+
+***
+<center><img src="https://www.naturefresh.ca/wp-content/uploads/How-To-Organize-Your-Fridge-InsideFridge-terraskitchen-873x950.jpg" height="600px" width="300px" /></center>
+
+
+Dataset and Data Science Process
+========================================================
+font-family: 'Times New Roman'
+transition: rotate
+
+<p style="font-size:20px; color:#1a1a1a; font-weight:bold;">
+The dataset consists about 180,000 recipes and consist of 12 attributes in the original datasets. 
+</p>
+
+<center><img src="https://i.ibb.co/61mKQ5f/dataset-v1.png" height="130px" width="700px" /></center>
+
+<font size="3">Data Source: https://www.kaggle.com/shuyangli94/food-com-recipes-and-user-interactions?select=RAW_recipes.csv</small></font>
+
+#### <p style="color:#660000; font-weight:bold;">Data Science Process</p>
+<center><img src="https://i.ibb.co/7SZswTP/data-process.png" height="200px" width="1000px" /></center>
+
+
+About The App
+========================================================
+font-family: 'Times New Roman'
+transition: rotate
+
+Features
+--------------------------------------------------------
+- <p style="font-size:26px; color:#1a1a1a; font-weight:bold;">Ingredients left in the fridge</p>
+- <p style="font-size:26px; color:#1a1a1a; font-weight:bold;">Time needed to prepare the food</p>
+- <p style="font-size:26px; color:#1a1a1a; font-weight:bold;">Nutrition level: Calories & Carbohydrates</p>
+
+Additional Helpers
+--------------------------------------------------------
+
+- <p style="font-size:26px; color:#1a1a1a; font-weight:bold;">Cooking timer</p>
+- <p style="font-size:26px; color:#1a1a1a; font-weight:bold;">Tags for identification</p>
+- <p style="font-size:26px; color:#1a1a1a; font-weight:bold;">Clear instructions</p>
+
+***
+
+![appimage](https://i.ibb.co/c1VZbtF/Appimage.png)
+
+Summary of Experience
+========================================================
+<br />
+![learn](https://i.ibb.co/Yhs8JWd/learn.jpg)
+
+***
+<br />
+- <p style="font-size:26px; color:#1a1a1a; font-weight:bold;">How to raise problem statements and solve it</p>
+- <p style="font-size:26px; color:#1a1a1a; font-weight:bold;">Process the data ready for modelling by using different libraries in RStudio</p>
+- <p style="font-size:26px; color:#1a1a1a; font-weight:bold;">Understand and build up the Shiny app architecture</p>
+<br /><br />
+[Video Presentation](https://youtu.be/bopSsQxdfxA)
